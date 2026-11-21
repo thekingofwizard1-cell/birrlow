@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Figtree:wght@400;600;700&family=Noto+Sans+Ethiopic:wght@400;600;800&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>tailwind.config={theme:{extend:{colors:{g:{DEFAULT:'#0F6B3E',d:'#073B22',l:'#E4F1EA'},gold:'#F5B301',ink:'#10201A'},fontFamily:{h:['Bricolage Grotesque','Noto Sans Ethiopic','sans-serif']}}}}</script>
 <style>
 body{font-family:Figtree,'Noto Sans Ethiopic',system-ui,sans-serif;background:#F4F7F5;color:#10201A}
@@ -41,33 +42,33 @@ body{font-family:Figtree,'Noto Sans Ethiopic',system-ui,sans-serif;background:#F
 const T={
 en:{n1:"Live auctions",n2:"Winners",n3:"How it works",n4:"Terms",si:"Sign in",rg:"Register",
 h1:"Win real items from 1 Birr.",sub:"Pick the lowest number nobody else picks. The lowest unique bid takes the item at that price.",
-c1:"See live auctions",c2:"How it works",trust:"Pay securely with Arifpay. All banks and mobile money accepted.",tg:"Join us on Telegram",
+c1:"See live auctions",c2:"How it works",trust:"Pay securely with Chapa. All banks and mobile money accepted.",tg:"Join us on Telegram",
 lad:"The lowest bid nobody else chose wins.",ladw:"Wins at 4 Birr",live:"Live auctions",entry:"Entry",per:"Birr per bid",bids:"bids",left:"left",bn:"Bid now",
 win:"Recent winners",won:"won at",lot:"Lot",sb:"Bids submitted",vw:"Views",cw:"Closing window",fee:"Entry fee",lid:"Lot ID",
 how:"Bids start at 1 Birr. The lowest unique one takes it home.",yb:"Your bid (Birr)",tip:"Tip: round numbers like 10, 50 and 100 are picked most. Try something less obvious.",
 add:"+ Add another amount",odds:"Better odds",ph:"Phone number",pay:"Pay {n} Birr & place bid",note:"Demo payment. No real money is charged.",
 yours:"Your bids",u:"Unique now",d:"Duplicated",soon:"This page comes in the next step.",back:"Back to auctions",
 ok:"Bid confirmed",min:"Minimum bid is 1 Birr.",bph:"Enter a valid Ethiopian phone number, like 0911 234 567.",dup:"Use a different amount for each bid.",wh:"Whole Birr only for this auction.",
-pt:"Demo payment (Arifpay)",pc:"Choose how to pay",pn:"Pay now",pp:"Processing…",age:"18+ only.",demo:"Demo version",open:"Bidding open",total:"Total",cents:"Cents allowed (like 10.25)",gp:"Guests can bid with just a phone number."},
+pt:"Demo payment (Chapa)",pc:"Choose how to pay",pn:"Pay now",pp:"Processing…",age:"18+ only.",demo:"Demo version",open:"Bidding open",total:"Total",cents:"Cents allowed (like 1.25)",gp:"Guests can bid with just a phone number."},
 am:{n1:"ክፍት ጨረታዎች",n2:"አሸናፊዎች",n3:"እንዴት ይሠራል?",n4:"ደንቦች",si:"ይግቡ",rg:"ይመዝገቡ",
 h1:"እውነተኛ ዕቃዎችን ከ1 ብር ጀምሮ ያሸንፉ።",sub:"ሌላ ማንም ያልመረጠውን ዝቅተኛ ቁጥር ይምረጡ። ብቸኛው ዝቅተኛ ጨረታ ዕቃውን በዚያ ዋጋ ያሸንፋል።",
-c1:"ክፍት ጨረታዎችን ይመልከቱ",c2:"እንዴት ይሠራል?",trust:"በአሪፍፔይ በአስተማማኝ ይክፈሉ። ሁሉም ባንኮችና የሞባይል ገንዘብ ይቀበላሉ።",tg:"ቴሌግራም ላይ ይቀላቀሉ",
+c1:"ክፍት ጨረታዎችን ይመልከቱ",c2:"እንዴት ይሠራል?",trust:"በቻፓ በአስተማማኝ ይክፈሉ። ሁሉም ባንኮችና የሞባይል ገንዘብ ይቀበላሉ።",tg:"ቴሌግራም ላይ ይቀላቀሉ",
 lad:"ሌላ ማንም ያልመረጠው ዝቅተኛ ቁጥር ያሸንፋል።",ladw:"በ4 ብር ያሸንፋል",live:"ክፍት ጨረታዎች",entry:"መግቢያ",per:"ብር በአንድ ጨረታ",bids:"ጨረታዎች",left:"ቀርቷል",bn:"አሁን ይጫረቱ",
 win:"የቅርብ ጊዜ አሸናፊዎች",won:"አሸነፈ በ",lot:"ጨረታ ቁጥር",sb:"የቀረቡ ጨረታዎች",vw:"እይታዎች",cw:"የሚዘጋበት ጊዜ",fee:"የመግቢያ ክፍያ",lid:"የጨረታ ቁጥር",
 how:"ጨረታ ከ1 ብር ይጀምራል። ብቸኛው ዝቅተኛ ጨረታ ዕቃውን ይወስዳል።",yb:"የእርስዎ ጨረታ (ብር)",tip:"ምክር፦ እንደ 10፣ 50 እና 100 ያሉ ክብ ቁጥሮች ብዙ ሰው ይመርጣቸዋል። ብዙም የማይታሰብ ቁጥር ይሞክሩ።",
 add:"+ ሌላ መጠን ጨምር",odds:"የተሻለ ዕድል",ph:"ስልክ ቁጥር",pay:"{n} ብር ይክፈሉና ይጫረቱ",note:"የሙከራ ክፍያ ነው። እውነተኛ ገንዘብ አይቆረጥም።",
 yours:"የእርስዎ ጨረታዎች",u:"አሁን ብቸኛ",d:"ተደግሟል",soon:"ይህ ገጽ በሚቀጥለው ደረጃ ይመጣል።",back:"ወደ ጨረታዎች ተመለስ",
 ok:"ጨረታዎ ተመዝግቧል",min:"ዝቅተኛው ጨረታ 1 ብር ነው።",bph:"ትክክለኛ የኢትዮጵያ ስልክ ቁጥር ያስገቡ፣ ለምሳሌ 0911 234 567።",dup:"ለእያንዳንዱ ጨረታ የተለያየ መጠን ይጠቀሙ።",wh:"በዚህ ጨረታ ሙሉ ብር ብቻ ይፈቀዳል።",
-pt:"የሙከራ ክፍያ (አሪፍፔይ)",pc:"የመክፈያ መንገድ ይምረጡ",pn:"አሁን ይክፈሉ",pp:"በሂደት ላይ…",age:"ዕድሜያቸው 18 እና ከዚያ በላይ ለሆኑ ብቻ።",demo:"የሙከራ ስሪት",open:"ጨረታ ክፍት ነው",total:"ድምር",cents:"ሳንቲም ይፈቀዳል (ለምሳሌ 10.25)",gp:"እንግዶች በስልክ ቁጥር ብቻ መጫረት ይችላሉ።"}};
+pt:"የሙከራ ክፍያ (ቻፓ)",pc:"የመክፈያ መንገድ ይምረጡ",pn:"አሁን ይክፈሉ",pp:"በሂደት ላይ…",age:"ዕድሜያቸው 18 እና ከዚያ በላይ ለሆኑ ብቻ።",demo:"የሙከራ ስሪት",open:"ጨረታ ክፍት ነው",total:"ድምር",cents:"ሳንቲም ይፈቀዳል (ለምሳሌ 1.25)",gp:"እንግዶች በስልክ ቁጥር ብቻ መጫረት ይችላሉ።"}};
 const S=(k,d)=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}};
 const W=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
 let L=S('bl_lang','en'); const t=k=>T[L][k]||T.en[k]||k; const nm=o=>o[L];
 const now=Date.now(),H=36e5;
 const A=[
-{id:228,n:{en:"Samsung 43\" TV",am:"ሳምሰንግ 43 ኢንች ቲቪ"},e:"📺",c:"from-indigo-700 to-purple-500",cat:"Electronics",fee:70,bids:398,views:2900,end:now+24*H,cents:false,d:{en:"UHD Smart TV with 24 month warranty",am:"UHD ስማርት ቲቪ፣ የ24 ወር ዋስትና ያለው"}},
-{id:229,n:{en:"Washing machine",am:"የልብስ ማጠቢያ ማሽን"},e:"🧺",c:"from-slate-700 to-slate-400",cat:"Home",fee:70,bids:175,views:1400,end:now+143*H,cents:false,d:{en:"Front-load washing machine, 8 kg",am:"ባለ 8 ኪሎ የፊት ጭነት ማጠቢያ ማሽን"}},
+{id:228,n:{en:"Samsung 43\" TV",am:"ሳምሰንግ 43 ኢንች ቲቪ"},e:"📺",c:"from-indigo-700 to-purple-500",cat:"Electronics",fee:70,bids:398,views:2900,end:now+24*H,cents:true,d:{en:"UHD Smart TV with 24 month warranty",am:"UHD ስማርት ቲቪ፣ የ24 ወር ዋስትና ያለው"}},
+{id:229,n:{en:"Washing machine",am:"የልብስ ማጠቢያ ማሽን"},e:"🧺",c:"from-slate-700 to-slate-400",cat:"Home",fee:70,bids:175,views:1400,end:now+143*H,cents:true,d:{en:"Front-load washing machine, 8 kg",am:"ባለ 8 ኪሎ የፊት ጭነት ማጠቢያ ማሽን"}},
 {id:232,n:{en:"Laptop",am:"ላፕቶፕ"},e:"💻",c:"from-zinc-600 to-zinc-300",cat:"Electronics",fee:75,bids:316,views:2100,end:now+167*H,cents:true,d:{en:"15-inch laptop, 8 GB RAM, 256 GB SSD",am:"ባለ 15 ኢንች ላፕቶፕ፣ 8 ጊባ ራም፣ 256 ጊባ ኤስኤስዲ"}},
-{id:233,n:{en:"Flagship smartphone",am:"ዘመናዊ ስማርት ስልክ"},e:"📱",c:"from-emerald-800 to-teal-400",cat:"Electronics",fee:80,bids:550,views:4800,end:now+119*H,cents:false,d:{en:"Latest flagship phone, 256 GB",am:"አዲስ ዘመናዊ ስልክ፣ 256 ጊባ"}}];
+{id:233,n:{en:"Flagship smartphone",am:"ዘመናዊ ስማርት ስልክ"},e:"📱",c:"from-emerald-800 to-teal-400",cat:"Electronics",fee:80,bids:550,views:4800,end:now+119*H,cents:true,d:{en:"Latest flagship phone, 256 GB",am:"አዲስ ዘመናዊ ስልክ፣ 256 ጊባ"}}];
 const WN=[{w:"Abel T.",p:"+25191****",i:{en:"Blender",am:"ብሌንደር"},a:"10.24"},{w:"Selam K.",p:"+25192****",i:{en:"Earphones",am:"ጆሮ ማዳመጫ"},a:"10.00"},{w:"Dawit M.",p:"+25194****",i:{en:"Bicycle",am:"ብስክሌት"},a:"10.03"}];
 const nav=[["#/",'n1'],["#/winners",'n2'],["#/how",'n3'],["#/terms",'n4'],["#/login",'si']];
 const mon=a=>a.toLocaleString();
@@ -113,10 +114,11 @@ function tryPay(id){const a=A.find(x=>x.id==id),e=document.getElementById('err')
 let m='';const nums=vals.map(Number);
 if(!vals.length||nums.some(n=>isNaN(n)||n<1))m=t('min');
 else if(!a.cents&&nums.some(n=>!Number.isInteger(n)))m=t('wh');
-else if(a.cents&&nums.some(n=>Math.round(n*100)/100!==n))m=t('wh');
+else if(a.cents&&nums.some(n=>Math.round(n*100)/100!==n))m=t('dec');
 else if(new Set(nums).size<nums.length)m=t('dup');
 else if(!/^(\+251|251|0)?9\d{8}$/.test(ph))m=t('bph');
 e.textContent=m;e.classList.toggle('hidden',!m);if(m)return;
+goPay(id,nums,ph);return;
 const total=a.fee*nums.length;
 document.getElementById('modal').innerHTML=`<div class="fixed inset-0 bg-black/60 z-40 grid place-items-center p-4"><div class="bg-white rounded-3xl p-6 w-full max-w-sm pop" role="dialog" aria-modal="true"><div class="text-xs font-bold text-gold bg-g-d inline-block px-3 py-1 rounded-full">${t('demo')}</div><h3 class="font-h font-extrabold text-xl mt-3">${t('pt')}</h3><p class="text-sm text-gray-600 mt-1">${t('pc')}</p>
 <div class="grid grid-cols-2 gap-2 mt-4 text-sm font-semibold">${["Telebirr","CBE Birr","Awash","Dashen"].map((b,i)=>`<label class="border rounded-xl p-3 cursor-pointer has-[:checked]:border-g has-[:checked]:bg-g-l"><input type="radio" name="bk" class="mr-2" ${i?'':'checked'}>${b}</label>`).join('')}</div>
@@ -141,12 +143,12 @@ addEventListener('hashchange',route);route();
 <script>
 /* BirrLow pages, part 2. Loaded by index.html. All data is fake (demo). */
 Object.assign(T.en,{wt:"Closed auctions",ws:"Winners and ranked bids from finished lots. Open a lot to see every counted bid, lowest first.",wp:"Winner picked",wl:"Winner",rk:"See ranked bids →",rt:"Ranked bids, lowest first",amt:"Amount (ETB)",bdr:"Bidders",res:"Result",uw:"Winner: lowest unique",dp:"Duplicated, excluded",hi:"Unique, but higher",
-ht:"How it works",hs:"Five steps from your first bid to your prize.",s1:"Choose an auction",s1d:"Browse live auctions. Each one shows the item, the entry fee and the closing time.",s2:"Pay and bid",s2d:"Enter your amount and pay the entry fee with Arifpay. Your bid is locked once payment is confirmed. More bids mean better odds.",s3:"Wait for the close",s3d:"The lowest bid that nobody else picked wins. You see the status of your own bids, never other people's.",s4:"Get the message",s4d:"The winner gets an SMS within 12 hours after closing.",s5:"Claim your prize",s5d:"Verify your identity and pay the winning amount within 7 days. The item is released after payment.",
+ht:"How it works",hs:"Five steps from your first bid to your prize.",s1:"Choose an auction",s1d:"Browse live auctions. Each one shows the item, the entry fee and the closing time.",s2:"Pay and bid",s2d:"Enter your amount and pay the entry fee with Chapa. Your bid is locked once payment is confirmed. More bids mean better odds.",s3:"Wait for the close",s3d:"The lowest bid that nobody else picked wins. You see the status of your own bids, never other people's.",s4:"Get the message",s4d:"The winner gets an SMS within 12 hours after closing.",s5:"Claim your prize",s5d:"Verify your identity and pay the winning amount within 7 days. The item is released after payment.",
 tt:"Terms & Conditions",tn:"Placeholder text. The client's lawyer must replace it with the real terms before launch.",
 rgt:"Create an account",rgs:"Register to follow your bids.",lgt:"Sign in",fn:"First name",ln:"Last name",em:"Email (optional)",pw:"Password",ag:"I am 18 or older and agree to the Terms",fg:"Forgot password?",ha:"Already registered?",na:"No account?",fne:"Please enter your first name.",pwe:"Password must be at least 6 characters.",age2:"Please confirm you are 18 or older.",out:"Sign out",my:"My bids",nob:"You have no bids yet.",wel:"Welcome",fgm:"Demo: password reset is not connected yet.",
 at:"Admin (demo)",an:"New auction",name:"Item name",fe:"Entry fee (Birr)",hrs:"Hours open",cr:"Create auction",cl:"Close and pick winner",nowin:"No unique bid. The auction extends and all bids carry over.",wonat:"Winner at {a} ETB (simulated bids)",ao:"Open auctions"});
 Object.assign(T.am,{wt:"የተዘጉ ጨረታዎች",ws:"ከተጠናቀቁ ጨረታዎች አሸናፊዎችና ደረጃ የተሰጣቸው ጨረታዎች። ጨረታ ከፍተው ሁሉንም ጨረታዎች ከዝቅተኛው ጀምሮ ይመልከቱ።",wp:"አሸናፊ ተመርጧል",wl:"አሸናፊ",rk:"ደረጃ የተሰጣቸውን ጨረታዎች ይመልከቱ →",rt:"ጨረታዎች ከዝቅተኛው ጀምሮ",amt:"መጠን (ብር)",bdr:"ተጫራቾች",res:"ውጤት",uw:"አሸናፊ፦ ዝቅተኛው ብቸኛ",dp:"ተደግሟል፣ አልተቆጠረም",hi:"ብቸኛ ግን ከፍ ያለ",
-ht:"እንዴት ይሠራል?",hs:"ከመጀመሪያ ጨረታዎ እስከ ሽልማትዎ አምስት ደረጃዎች።",s1:"ጨረታ ይምረጡ",s1d:"ክፍት ጨረታዎችን ይመልከቱ። እያንዳንዱ ዕቃውን፣ የመግቢያ ክፍያውንና የሚዘጋበትን ጊዜ ያሳያል።",s2:"ይክፈሉና ይጫረቱ",s2d:"መጠንዎን አስገብተው የመግቢያ ክፍያውን በአሪፍፔይ ይክፈሉ። ክፍያው ሲረጋገጥ ጨረታዎ ይቆለፋል። ብዙ ጨረታ ማለት የተሻለ ዕድል ነው።",s3:"ጨረታው እስኪዘጋ ይጠብቁ",s3d:"ሌላ ማንም ያልመረጠው ዝቅተኛ ጨረታ ያሸንፋል። የራስዎን ጨረታዎች ሁኔታ ያያሉ፤ የሌሎችን አያዩም።",s4:"መልዕክት ይደርስዎታል",s4d:"አሸናፊው ጨረታው ከተዘጋ በ12 ሰዓት ውስጥ በኤስኤምኤስ ይነገረዋል።",s5:"ሽልማትዎን ይውሰዱ",s5d:"በ7 ቀናት ውስጥ ማንነትዎን አረጋግጠው የአሸናፊውን መጠን ይክፈሉ። ዕቃው ክፍያ ከተረጋገጠ በኋላ ይሰጣል።",
+ht:"እንዴት ይሠራል?",hs:"ከመጀመሪያ ጨረታዎ እስከ ሽልማትዎ አምስት ደረጃዎች።",s1:"ጨረታ ይምረጡ",s1d:"ክፍት ጨረታዎችን ይመልከቱ። እያንዳንዱ ዕቃውን፣ የመግቢያ ክፍያውንና የሚዘጋበትን ጊዜ ያሳያል።",s2:"ይክፈሉና ይጫረቱ",s2d:"መጠንዎን አስገብተው የመግቢያ ክፍያውን በቻፓ ይክፈሉ። ክፍያው ሲረጋገጥ ጨረታዎ ይቆለፋል። ብዙ ጨረታ ማለት የተሻለ ዕድል ነው።",s3:"ጨረታው እስኪዘጋ ይጠብቁ",s3d:"ሌላ ማንም ያልመረጠው ዝቅተኛ ጨረታ ያሸንፋል። የራስዎን ጨረታዎች ሁኔታ ያያሉ፤ የሌሎችን አያዩም።",s4:"መልዕክት ይደርስዎታል",s4d:"አሸናፊው ጨረታው ከተዘጋ በ12 ሰዓት ውስጥ በኤስኤምኤስ ይነገረዋል።",s5:"ሽልማትዎን ይውሰዱ",s5d:"በ7 ቀናት ውስጥ ማንነትዎን አረጋግጠው የአሸናፊውን መጠን ይክፈሉ። ዕቃው ክፍያ ከተረጋገጠ በኋላ ይሰጣል።",
 tt:"ደንቦችና ሁኔታዎች",tn:"ይህ ጊዜያዊ ጽሑፍ ነው። ከመጀመሪያ በፊት የደንበኛው ጠበቃ እውነተኛውን ደንብ መተካት አለበት።",
 rgt:"አካውንት ይክፈቱ",rgs:"ጨረታዎችዎን ለመከታተል ይመዝገቡ።",lgt:"ይግቡ",fn:"የመጀመሪያ ስም",ln:"የአባት ስም",em:"ኢሜይል (አማራጭ)",pw:"የይለፍ ቃል",ag:"ዕድሜዬ 18 ወይም ከዚያ በላይ ነው፤ በደንቦቹ እስማማለሁ",fg:"የይለፍ ቃል ረስተዋል?",ha:"አስቀድመው ተመዝግበዋል?",na:"አካውንት የለዎትም?",fne:"እባክዎ የመጀመሪያ ስምዎን ያስገቡ።",pwe:"የይለፍ ቃል ቢያንስ 6 ፊደል መሆን አለበት።",age2:"ዕድሜዎ 18 ወይም ከዚያ በላይ መሆኑን ያረጋግጡ።",out:"ይውጡ",my:"ጨረታዎቼ",nob:"እስካሁን ምንም ጨረታ የለዎትም።",wel:"እንኳን ደህና መጡ",fgm:"ሙከራ፦ የይለፍ ቃል መቀየር ገና አልተገናኘም።",
 at:"አስተዳዳሪ (ሙከራ)",an:"አዲስ ጨረታ",name:"የዕቃው ስም",fe:"የመግቢያ ክፍያ (ብር)",hrs:"የሚቆይባቸው ሰዓታት",cr:"ጨረታ ፍጠር",cl:"ዝጋና አሸናፊ ምረጥ",nowin:"ብቸኛ ጨረታ የለም። ጨረታው ይራዘማል፤ ቀደምት ጨረታዎች ይቆያሉ።",wonat:"አሸናፊ በ{a} ብር (የተመሰለ)",ao:"ክፍት ጨረታዎች"});
@@ -209,13 +211,28 @@ const my=()=>{const u=S('bl_user',null);if(!u)return loginV();const rows=A.flatM
 return band(t('my'),u.name)+wrap(rows.length?`<div class="bg-white border rounded-2xl">${rows.map(([a,b])=>`<div class="flex justify-between items-center p-4 border-b last:border-0"><div><div class="font-bold">${nm(a.n)} #${a.id}</div><div class="font-h text-lg">${b} ETB</div></div><span class="text-xs font-bold px-3 py-1 rounded-full ${stat(b)=='u'?'bg-g-l text-g':'bg-red-100 text-red-700'}">${t(stat(b))}</span></div>`).join('')}</div>`:`<p>${t('nob')}</p><a href="#/" class="${btn} mt-4">${t('c1')}</a>`)};
 const admin=()=>band(t('at'),'')+wrap(`<div class="bg-white border rounded-2xl p-5"><b>${t('an')}</b>${inp('a1','','text',t('name'))}${inp('a2','','number',t('fe'))}${inp('a3','','number',t('hrs'))}<button onclick="makeA()" class="${btn} mt-4">${t('cr')}</button></div><h3 class="font-h font-bold text-lg mt-8 mb-3">${t('ao')}</h3>${A.map(a=>`<div class="flex justify-between items-center bg-white border rounded-2xl p-4 mb-3"><span class="font-bold">#${a.id} ${nm(a.n)}</span><button onclick="closeA(${a.id})" class="bg-gold font-bold rounded-lg px-3 py-2 text-sm">${t('cl')}</button></div>`).join('')}<div id="cr"></div>`);
 function makeA(){const n=gv('a1'),f=+gv('a2'),h=+gv('a3');if(!n||!f||!h)return toast('⚠');
-A.push({id:Math.max(...A.map(a=>a.id))+1,n:{en:n,am:n},e:"🎁",c:"from-green-700 to-amber-400",cat:"New",fee:f,bids:0,views:0,end:Date.now()+h*H,cents:false,d:{en:n,am:n}});route();toast('✔')}
+A.push({id:Math.max(...A.map(a=>a.id))+1,n:{en:n,am:n},e:"🎁",c:"from-green-700 to-amber-400",cat:"New",fee:f,bids:0,views:0,end:Date.now()+h*H,cents:true,d:{en:n,am:n}});route();toast('✔')}
 function closeA(id){const cnt={};for(let v=1;v<=30;v++)cnt[v]=Math.floor(Math.random()*4);bidsOf(id).forEach(v=>cnt[Math.floor(v)]=(cnt[Math.floor(v)]||0)+1);
 const w=Object.keys(cnt).map(Number).sort((a,b)=>a-b).find(v=>cnt[v]==1);
 document.getElementById('cr').innerHTML=w?`<div class="bg-gold/20 rounded-xl p-4 mt-4 pop"><b>#${id}</b> ${t('wonat').replace('{a}',w)}</div>`:`<div class="bg-red-50 rounded-xl p-4 mt-4">${t('nowin')}</div>`}
-function PG(h){if(h=='#/winners')return wList();if(h.startsWith('#/closed/'))return ranked(h.slice(9));if(h=='#/how')return howV();if(h=='#/terms')return termsV();if(h=='#/register')return regV();if(h=='#/login')return loginV();if(h=='#/my')return my();if(h=='#/admin')return admin();if(h=='#/out'){W('bl_user',null);location.hash='#/';return home()}return null}
+function PG(h){if(h.startsWith('#/pay'))return payV(h);if(h=='#/winners')return wList();if(h.startsWith('#/closed/'))return ranked(h.slice(9));if(h=='#/how')return howV();if(h=='#/terms')return termsV();if(h=='#/register')return regV();if(h=='#/login')return loginV();if(h=='#/my')return my();if(h=='#/admin')return admin();if(h=='#/out'){W('bl_user',null);location.hash='#/';return home()}return null}
+Object.assign(T.en,{dec:"Use at most 2 decimal places, like 1.25.",payt:"Payment",pays:"Check your bids, then pay with Chapa.",chapa:"Pay {n} Birr with Chapa",tmode:"Test mode: no real money is charged.",in:"You are in! Your bids are registered.",back2:"You can close this page and go back to Telegram."});
+Object.assign(T.am,{dec:"ቢበዛ 2 አሃዝ ከነጥብ በኋላ ይጠቀሙ፣ ለምሳሌ 1.25።",payt:"ክፍያ",pays:"ጨረታዎችዎን ያረጋግጡና በቻፓ ይክፈሉ።",chapa:"{n} ብር በቻፓ ይክፈሉ",tmode:"የሙከራ ሁኔታ፦ እውነተኛ ገንዘብ አይቆረጥም።",in:"ተመዝግበዋል! ጨረታዎችዎ ተመዝግበዋል።",back2:"ይህን ገጽ ዘግተው ወደ ቴሌግራም መመለስ ይችላሉ።"});
+// Telegram Mini App: sign in automatically with the Telegram account
+const TG=(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.initData)?Telegram.WebApp:null;
+if(TG){try{TG.ready();TG.expand()}catch(e){}const u=(TG.initDataUnsafe&&TG.initDataUnsafe.user)||{};W('bl_user',{name:((u.first_name||'')+' '+(u.last_name||'')).trim()||'Telegram user',tg:u.id})}
+// Set this to your server address when the backend is ready. Empty = test mode.
+const BACKEND="";
+function goPay(id,nums,ph){const q='#/pay?a='+id+'&b='+nums.join(',')+'&p='+encodeURIComponent(ph)+(TG&&TG.initDataUnsafe&&TG.initDataUnsafe.user?'&u='+TG.initDataUnsafe.user.id:'');
+if(TG)TG.openLink(location.origin+location.pathname+q);else location.hash=q}
+const payV=h=>{const q=new URLSearchParams(h.split('?')[1]||'');const a=A.find(x=>x.id==q.get('a'));const nums=(q.get('b')||'').split(',').filter(Boolean).map(Number);if(!a||!nums.length||nums.some(isNaN))return stub();
+const total=+(a.fee*nums.length).toFixed(2);window._pay={id:a.id,nums,p:q.get('p'),u:q.get('u'),total};
+return band(t('payt'),t('pays'))+wrap(`<div class="bg-white border rounded-3xl p-6 max-w-md mx-auto"><div class="text-5xl text-center">${a.e}</div><h3 class="font-h font-bold text-xl text-center mt-2">${nm(a.n)} #${a.id}</h3><div class="mt-4 divide-y">${nums.map(n=>`<div class="flex justify-between py-2"><span>${t('yb')}</span><b>${n} ETB</b></div>`).join('')}<div class="flex justify-between py-2"><span>${t('fee')} × ${nums.length}</span><b>${total} ETB</b></div></div><button id="cp" onclick="payNow()" class="${btn} w-full mt-5 text-center">${t('chapa').replace('{n}',total)}</button><p class="text-xs text-gray-500 text-center mt-2">${t('tmode')}</p></div>`)};
+async function payNow(){const p=window._pay,b=document.getElementById('cp');b.disabled=true;b.textContent=t('pp');
+if(BACKEND){try{const r=await fetch(BACKEND+'/api/pay/init',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});const d=await r.json();location.href=d.checkout_url;return}catch(e){b.disabled=false;toast('⚠');return}}
+setTimeout(()=>{W('bl_bids'+p.id,bidsOf(p.id).concat(p.nums));W('bl_extra'+p.id,S('bl_extra'+p.id,0)+p.nums.length);document.getElementById('app').innerHTML=band(t('ok'),'')+wrap(`<div class="bg-white border rounded-3xl p-6 max-w-md mx-auto text-center"><div class="text-6xl">✅</div><p class="font-h font-bold text-xl mt-3">${t('in')}</p><p class="text-gray-600 mt-2">${t('back2')}</p><a href="#/a/${p.id}" class="${btn} mt-5">${t('yours')}</a></div>`)},1200)}
 const _chrome=chrome;
-chrome=function(){_chrome();if(!S('bl_user',null))return;['nav','mnav'].forEach(i=>{const e=document.getElementById(i);e.innerHTML=e.innerHTML.replace('href="#/login"','href="#/my"').replace('>'+t('si')+'<','>'+t('my')+'<').replace(/<a href="#\/register"[^>]*>[^<]*<\/a>/,`<a href="#/out" class="bg-g text-white rounded-lg px-4 py-2">${t('out')}</a>`)})};
+chrome=function(){_chrome();if(!S('bl_user',null))return;['nav','mnav'].forEach(i=>{const e=document.getElementById(i);e.innerHTML=e.innerHTML.replace('href="#/login"','href="#/my"').replace('>'+t('si')+'<','>'+t('my')+'<').replace(/<a href="#\/register"[^>]*>[^<]*<\/a>/,(TG?'':`<a href="#/out" class="bg-g text-white rounded-lg px-4 py-2">${t('out')}</a>`))})};
 route();
 
 </script>
