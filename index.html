@@ -95,7 +95,7 @@ return `<div class="max-w-6xl mx-auto px-4 pt-6"><a href="#/" class="text-sm tex
 <div class="max-w-6xl mx-auto px-4 pt-4 grid lg:grid-cols-2 gap-6">
 <div><div class="h-72 md:h-96 rounded-3xl bg-gradient-to-br ${a.c} grid place-items-center text-9xl relative">${a.e}<span class="absolute top-4 left-4 bg-g text-white text-xs font-bold px-3 py-1 rounded-full">● ${t('open')}</span><span class="absolute top-4 right-4 bg-white/80 text-xs px-3 py-1 rounded-full">${a.cat}</span></div>
 <h1 class="font-h font-extrabold text-3xl mt-5">${nm(a.n)}</h1><p class="text-gray-600 mt-2">${nm(a.d)}</p></div>
-<div class="space-y-4"><div class="grid grid-cols-2 gap-4"><div class="bg-white border rounded-2xl p-4"><div class="text-xs text-gray-500">${t('sb')}</div><div class="font-h font-extrabold text-2xl" id="bc">${mon(a.bids+S('bl_extra'+id,0))}</div></div><div class="bg-white border rounded-2xl p-4"><div class="text-xs text-gray-500">${t('vw')}</div><div class="font-h font-extrabold text-2xl">${(a.views/1000).toFixed(1)}K</div></div></div>
+<div class="space-y-4"><div class="grid grid-cols-2 gap-4"><div class="bg-white border rounded-2xl p-4"><div class="text-xs text-gray-500">${t('sb')}</div><div class="font-h font-extrabold text-2xl" id="bc">${mon(a.bids+S('bl_extra'+id,0))}</div></div><div class="bg-white border rounded-2xl p-4"><div class="text-xs text-gray-500">${t('vw')}</div><div class="font-h font-extrabold text-2xl">${a.views?(a.views/1000).toFixed(1)+'K':'—'}</div></div></div>
 <div class="bg-g-l rounded-2xl p-4"><div class="flex justify-between text-sm font-semibold"><span>${t('cw')}</span><span data-end="${a.end}">${cd(a.end-Date.now())}</span></div><div class="h-2 bg-white rounded-full mt-3"><div class="h-2 bg-g rounded-full" style="width:70%"></div></div></div>
 <div class="grid grid-cols-2 gap-4"><div class="bg-white border rounded-2xl p-4"><div class="text-xs text-gray-500">${t('lid')}</div><b>#${a.id}</b></div><div class="bg-white border rounded-2xl p-4"><div class="text-xs text-gray-500">${t('fee')}</div><b>${a.fee}.00 ETB</b></div></div>
 <div class="bg-white border rounded-3xl p-5 shadow-sm"><p class="font-semibold text-g">${t('how')}</p><p class="text-xs text-gray-500 mt-1">${t('gp')} ${a.cents?t('cents'):''}</p>
@@ -107,17 +107,18 @@ return `<div class="max-w-6xl mx-auto px-4 pt-6"><a href="#/" class="text-sm tex
 ${my.length?`<div class="bg-white border rounded-2xl p-5"><b>${t('yours')}</b>${my.map(b=>`<div class="flex justify-between py-2 border-b last:border-0"><span class="font-h font-bold">${b} ETB</span><span class="text-xs font-bold px-3 py-1 rounded-full ${stat(b)=='u'?'bg-g-l text-g':'bg-red-100 text-red-700'}">${t(stat(b))}</span></div>`).join('')}</div>`:''}
 </div></div>`}
 function inputs(){const a=A.find(x=>x.id==cur);const box=document.getElementById('inputs');if(!box)return;
-box.innerHTML=amts.map((v,i)=>`<input inputmode="decimal" value="${v}" oninput="amts[${i}]=this.value;tot()" placeholder="e.g. 137" aria-label="${t('yb')}" class="w-full mt-2 bg-gray-100 rounded-xl px-4 py-3 text-center text-xl font-bold">`).join('');tot()}
-let cur=0;
+box.innerHTML=amts.map((v,i)=>`<input inputmode="decimal" value="${v}" oninput="amts[${i}]=this.value;tot()" placeholder="e.g. 137" aria-label="${t('yb')}" class="w-full mt-2 bg-gray-100 rounded-xl px-4 py-3 text-center text-xl font-bold">`).join('');if(LIVE){const p=document.getElementById('phone');if(p&&p.previousElementSibling){p.previousElementSibling.remove();p.remove()}}tot()}
+let cur=0;var LIVE=false;
 function tot(){const a=A.find(x=>x.id==cur);const n=amts.filter(v=>v!=='').length||1;document.getElementById('pay').textContent=t('pay').replace('{n}',a.fee*n)}
-function tryPay(id){const a=A.find(x=>x.id==id),e=document.getElementById('err'),vals=amts.filter(v=>v!==''),ph=document.getElementById('phone').value.replace(/[\s-]/g,'');
+function tryPay(id){const a=A.find(x=>x.id==id),e=document.getElementById('err'),vals=amts.filter(v=>v!==''),ph=((document.getElementById('phone')||{value:''}).value).replace(/[\s-]/g,'');
 let m='';const nums=vals.map(Number);
 if(!vals.length||nums.some(n=>isNaN(n)||n<1))m=t('min');
 else if(!a.cents&&nums.some(n=>!Number.isInteger(n)))m=t('wh');
 else if(a.cents&&nums.some(n=>Math.round(n*100)/100!==n))m=t('dec');
 else if(new Set(nums).size<nums.length)m=t('dup');
-else if(!/^(\+251|251|0)?9\d{8}$/.test(ph))m=t('bph');
+else if(!LIVE&&!/^(\+251|251|0)?9\d{8}$/.test(ph))m=t('bph');
 e.textContent=m;e.classList.toggle('hidden',!m);if(m)return;
+if(LIVE){serverPay(id,nums);return}
 goPay(id,nums,ph);return;
 const total=a.fee*nums.length;
 document.getElementById('modal').innerHTML=`<div class="fixed inset-0 bg-black/60 z-40 grid place-items-center p-4"><div class="bg-white rounded-3xl p-6 w-full max-w-sm pop" role="dialog" aria-modal="true"><div class="text-xs font-bold text-gold bg-g-d inline-block px-3 py-1 rounded-full">${t('demo')}</div><h3 class="font-h font-extrabold text-xl mt-3">${t('pt')}</h3><p class="text-sm text-gray-600 mt-1">${t('pc')}</p>
@@ -207,7 +208,7 @@ function doReg(){if(!gv('fn'))return ferr(t('fne'));if(!okPh(gv('ph2')))return f
 W('bl_user',{name:gv('fn')+' '+gv('ln'),phone:gv('ph2')});location.hash='#/my';toast(t('wel')+' '+gv('fn'))}
 function doLogin(){if(!okPh(gv('ph2')))return ferr(t('bph'));if(gv('pw').length<6)return ferr(t('pwe'));
 const u=S('bl_user',null),p=gv('ph2');W('bl_user',u&&u.phone==p?u:{name:'Demo user',phone:p});location.hash='#/my';route()}
-const my=()=>{const u=S('bl_user',null);if(!u)return loginV();const rows=A.flatMap(a=>bidsOf(a.id).map(b=>[a,b]));
+const my=()=>{if(LIVE){loadMy();return band(t('my'),'')+wrap('<div id="mybox" class="text-gray-500">…</div>')}const u=S('bl_user',null);if(!u)return loginV();const rows=A.flatMap(a=>bidsOf(a.id).map(b=>[a,b]));
 return band(t('my'),u.name)+wrap(rows.length?`<div class="bg-white border rounded-2xl">${rows.map(([a,b])=>`<div class="flex justify-between items-center p-4 border-b last:border-0"><div><div class="font-bold">${nm(a.n)} #${a.id}</div><div class="font-h text-lg">${b} ETB</div></div><span class="text-xs font-bold px-3 py-1 rounded-full ${stat(b)=='u'?'bg-g-l text-g':'bg-red-100 text-red-700'}">${t(stat(b))}</span></div>`).join('')}</div>`:`<p>${t('nob')}</p><a href="#/" class="${btn} mt-4">${t('c1')}</a>`)};
 const admin=()=>band(t('at'),'')+wrap(`<div class="bg-white border rounded-2xl p-5"><b>${t('an')}</b>${inp('a1','','text',t('name'))}${inp('a2','','number',t('fe'))}${inp('a3','','number',t('hrs'))}<button onclick="makeA()" class="${btn} mt-4">${t('cr')}</button></div><h3 class="font-h font-bold text-lg mt-8 mb-3">${t('ao')}</h3>${A.map(a=>`<div class="flex justify-between items-center bg-white border rounded-2xl p-4 mb-3"><span class="font-bold">#${a.id} ${nm(a.n)}</span><button onclick="closeA(${a.id})" class="bg-gold font-bold rounded-lg px-3 py-2 text-sm">${t('cl')}</button></div>`).join('')}<div id="cr"></div>`);
 function makeA(){const n=gv('a1'),f=+gv('a2'),h=+gv('a3');if(!n||!f||!h)return toast('⚠');
@@ -225,14 +226,37 @@ if(TG){try{TG.ready();TG.expand()}catch(e){}const u=(TG.initDataUnsafe&&TG.initD
 const BACKEND="";
 function goPay(id,nums,ph){const q='#/pay?a='+id+'&b='+nums.join(',')+'&p='+encodeURIComponent(ph)+(TG&&TG.initDataUnsafe&&TG.initDataUnsafe.user?'&u='+TG.initDataUnsafe.user.id:'');
 if(TG)TG.openLink(location.origin+location.pathname+q);else location.hash=q}
-const payV=h=>{const q=new URLSearchParams(h.split('?')[1]||'');const a=A.find(x=>x.id==q.get('a'));const nums=(q.get('b')||'').split(',').filter(Boolean).map(Number);if(!a||!nums.length||nums.some(isNaN))return stub();
+const payV=h=>{const q=new URLSearchParams(h.split('?')[1]||'');if(q.get('o')){loadOrder(q.get('o'));return band(t('payt'),t('pays'))+wrap('<div id="ord" class="text-center text-gray-500 py-10">…</div>')}const a=A.find(x=>x.id==q.get('a'));const nums=(q.get('b')||'').split(',').filter(Boolean).map(Number);if(!a||!nums.length||nums.some(isNaN))return stub();
 const total=+(a.fee*nums.length).toFixed(2);window._pay={id:a.id,nums,p:q.get('p'),u:q.get('u'),total};
 return band(t('payt'),t('pays'))+wrap(`<div class="bg-white border rounded-3xl p-6 max-w-md mx-auto"><div class="text-5xl text-center">${a.e}</div><h3 class="font-h font-bold text-xl text-center mt-2">${nm(a.n)} #${a.id}</h3><div class="mt-4 divide-y">${nums.map(n=>`<div class="flex justify-between py-2"><span>${t('yb')}</span><b>${n} ETB</b></div>`).join('')}<div class="flex justify-between py-2"><span>${t('fee')} × ${nums.length}</span><b>${total} ETB</b></div></div><button id="cp" onclick="payNow()" class="${btn} w-full mt-5 text-center">${t('chapa').replace('{n}',total)}</button><p class="text-xs text-gray-500 text-center mt-2">${t('tmode')}</p></div>`)};
 async function payNow(){const p=window._pay,b=document.getElementById('cp');b.disabled=true;b.textContent=t('pp');
 if(BACKEND){try{const r=await fetch(BACKEND+'/api/pay/init',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(p)});const d=await r.json();location.href=d.checkout_url;return}catch(e){b.disabled=false;toast('⚠');return}}
 setTimeout(()=>{W('bl_bids'+p.id,bidsOf(p.id).concat(p.nums));W('bl_extra'+p.id,S('bl_extra'+p.id,0)+p.nums.length);document.getElementById('app').innerHTML=band(t('ok'),'')+wrap(`<div class="bg-white border rounded-3xl p-6 max-w-md mx-auto text-center"><div class="text-6xl">✅</div><p class="font-h font-bold text-xl mt-3">${t('in')}</p><p class="text-gray-600 mt-2">${t('back2')}</p><a href="#/a/${p.id}" class="${btn} mt-5">${t('yours')}</a></div>`)},1200)}
+Object.assign(T.en,{tgb:"Open in Telegram",tgonly:"Bids are placed from Telegram. Open @BirrLowBot to bid.",e_auth:"Please open BirrLow from the Telegram bot.",e_closed:"This auction or order is not open.",e_min:"Minimum bid is 1 Birr.",e_dec:"Use at most 2 decimal places, like 1.25.",e_dup:"You already bid one of these amounts.",e_cap:"You reached the maximum number of bids for this auction.",e_bad:"Please check your amounts.",e_server:"Something went wrong. Please try again."});
+Object.assign(T.am,{tgb:"በቴሌግራም ይክፈቱ",tgonly:"ጨረታ የሚቀርበው ከቴሌግራም ነው። ለመጫረት @BirrLowBot ይክፈቱ።",e_auth:"እባክዎ BirrLowን ከቴሌግራም ቦት ይክፈቱ።",e_closed:"ይህ ጨረታ ወይም ትዕዛዝ ክፍት አይደለም።",e_min:"ዝቅተኛው ጨረታ 1 ብር ነው።",e_dec:"ቢበዛ 2 አሃዝ ከነጥብ በኋላ ይጠቀሙ፣ ለምሳሌ 1.25።",e_dup:"ከእነዚህ መጠኖች አንዱን አስቀድመው አቅርበዋል።",e_cap:"በዚህ ጨረታ ማቅረብ የሚችሉትን ከፍተኛ ብዛት ደርሰዋል።",e_bad:"እባክዎ መጠኖችዎን ያረጋግጡ።",e_server:"የሆነ ችግር ተፈጥሯል። እባክዎ እንደገና ይሞክሩ።"});
+// ---- Server connection (same Vercel address, /api) ----
+async function api(r,body){const o=body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...body,initData:TG?TG.initData:''})}:{};const res=await fetch('/api?r='+r,o);return res.json()}
+const GRAD=["from-indigo-700 to-purple-500","from-slate-700 to-slate-400","from-zinc-600 to-zinc-300","from-emerald-800 to-teal-400"];
+async function loadA(first){try{const d=await api('auctions');if(!d.ok||!d.auctions.length)return;
+A.length=0;d.auctions.forEach((x,i)=>A.push({id:x.id,n:{en:x.name,am:x.name_am||x.name},e:x.emoji||'🎁',c:GRAD[i%4],cat:'Auction',fee:+x.fee,bids:x.bids,views:0,end:new Date(x.end_at).getTime(),cents:true,d:{en:x.description||'',am:x.description||''}}));
+LIVE=true;if(first){route();return}
+const h=location.hash;if(h==''||h=='#/')route();else{const m=h.match(/^#\/a\/(\d+)/);if(m){const a=A.find(x=>x.id==+m[1]),c=document.getElementById('bc');if(a&&c)c.textContent=mon(a.bids)}}}catch(e){}}
+async function serverPay(id,nums){const e=document.getElementById('err');const fail=k=>{e.textContent=t('e_'+k);e.classList.remove('hidden')};
+if(!TG)return fail('auth');e.classList.add('hidden');
+try{const d=await api('order',{auction_id:id,amounts:nums});if(!d.ok)return fail(d.error);TG.openLink(location.origin+location.pathname+'#/pay?o='+d.token)}catch(x){fail('server')}}
+async function loadOrder(tok){const box=()=>document.getElementById('ord');let d;try{d=await api('order&o='+tok)}catch(e){d={ok:false,error:'server'}}
+if(!box())return;if(!d.ok){box().textContent=t('e_'+d.error);return}const o=d.order;window._ord=tok;
+if(o.status=='paid'){box().innerHTML=okCard();return}
+box().innerHTML=`<div class="bg-white border rounded-3xl p-6 max-w-md mx-auto text-left"><div class="text-5xl text-center">${o.emoji||'🎁'}</div><h3 class="font-h font-bold text-xl text-center mt-2">${o.name} #${o.auction_id}</h3><div class="mt-4 divide-y text-ink">${o.amounts.map(n=>`<div class="flex justify-between py-2"><span>${t('yb')}</span><b>${n} ETB</b></div>`).join('')}<div class="flex justify-between py-2"><span>${t('fee')} × ${o.amounts.length}</span><b>${o.total} ETB</b></div></div><button id="cp" onclick="payOrder()" class="${btn} w-full mt-5 text-center">${t('chapa').replace('{n}',o.total)}</button><p class="text-xs text-gray-500 text-center mt-2">${t('tmode')}</p></div>`}
+const okCard=()=>`<div class="bg-white border rounded-3xl p-6 max-w-md mx-auto text-center text-ink"><div class="text-6xl">✅</div><p class="font-h font-bold text-xl mt-3">${t('in')}</p><p class="text-gray-600 mt-2">${t('back2')}</p><a href="#/my" class="${btn} mt-5">${t('my')}</a></div>`;
+async function payOrder(){const b=document.getElementById('cp');b.disabled=true;b.textContent=t('pp');let d;try{d=await api('pay',{o:window._ord})}catch(e){d={ok:false,error:'server'}}
+document.getElementById('ord').innerHTML=d.ok?okCard():`<p class="text-red-600">${t('e_'+d.error)}</p>`}
+async function loadMy(){let d;try{d=await api('mybids',{})}catch(e){d={ok:false,error:'server'}}const b=document.getElementById('mybox');if(!b)return;
+if(!d.ok){b.innerHTML=`<p>${t('e_'+d.error)}</p>`;return}
+b.innerHTML=d.bids.length?`<div class="bg-white border rounded-2xl text-ink">${d.bids.map(x=>`<div class="flex justify-between items-center p-4 border-b last:border-0"><div><div class="font-bold">${x.name} #${x.auction_id}</div><div class="font-h text-lg">${x.amount} ETB</div></div><span class="text-xs font-bold px-3 py-1 rounded-full ${x.status=='unique'?'bg-g-l text-g':'bg-red-100 text-red-700'}">${t(x.status=='unique'?'u':'d')}</span></div>`).join('')}</div>`:`<p>${t('nob')}</p>`}
+loadA(true);setInterval(()=>loadA(false),8000);
 const _chrome=chrome;
-chrome=function(){_chrome();if(!S('bl_user',null))return;['nav','mnav'].forEach(i=>{const e=document.getElementById(i);e.innerHTML=e.innerHTML.replace('href="#/login"','href="#/my"').replace('>'+t('si')+'<','>'+t('my')+'<').replace(/<a href="#\/register"[^>]*>[^<]*<\/a>/,(TG?'':`<a href="#/out" class="bg-g text-white rounded-lg px-4 py-2">${t('out')}</a>`))})};
+chrome=function(){_chrome();if(LIVE){['nav','mnav'].forEach(i=>{const e=document.getElementById(i);e.innerHTML=e.innerHTML.replace(/<a href="#\/login"[^>]*>[^<]*<\/a>/,`<a href="#/my" class="hover:text-g">${t('my')}</a>`).replace(/<a href="#\/register"[^>]*>[^<]*<\/a>/,TG?'':`<a href="https://t.me/BirrLowBot" class="bg-g text-white rounded-lg px-4 py-2">${t('tgb')}</a>`)});return}if(!S('bl_user',null))return;['nav','mnav'].forEach(i=>{const e=document.getElementById(i);e.innerHTML=e.innerHTML.replace('href="#/login"','href="#/my"').replace('>'+t('si')+'<','>'+t('my')+'<').replace(/<a href="#\/register"[^>]*>[^<]*<\/a>/,(TG?'':`<a href="#/out" class="bg-g text-white rounded-lg px-4 py-2">${t('out')}</a>`))})};
 route();
 
 </script>
