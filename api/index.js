@@ -17,6 +17,8 @@ const setup = () => ready || (ready = db().query(`CREATE TABLE IF NOT EXISTS ord
   status ENUM('pending','paid','expired') NOT NULL DEFAULT 'pending',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`));
 
+const TOKEN = () => (process.env.BOT_TOKEN || '').trim();
+
 // Check that the Telegram data is genuine (signed with the bot token)
 function tgUser(init) {
   if (!init) return null;
@@ -24,7 +26,7 @@ function tgUser(init) {
   if (!hash) return null;
   p.delete('hash');
   const dcs = [...p.entries()].sort(([a], [b]) => (a < b ? -1 : 1)).map(([k, v]) => k + '=' + v).join('\n');
-  const secret = crypto.createHmac('sha256', 'WebAppData').update(process.env.BOT_TOKEN || '').digest();
+  const secret = crypto.createHmac('sha256', 'WebAppData').update(TOKEN()).digest();
   const calc = crypto.createHmac('sha256', secret).update(dcs).digest('hex');
   const a = Buffer.from(calc), b = Buffer.from(hash);
   if (a.length !== b.length || !crypto.timingSafeEqual(a, b)) return null;
@@ -85,6 +87,10 @@ module.exports = async (req, res) => {
   const body = req.body && typeof req.body === 'object' ? req.body : {};
   const out = (o, s) => { res.statusCode = s || 200; res.end(JSON.stringify(o)); };
   try {
+    if (r === 'health') {
+      const t = TOKEN();
+      return out({ ok: true, token_set: !!t, token_format_ok: /^\d+:[A-Za-z0-9_-]{30,}$/.test(t), db_host_set: !!process.env.DB_HOST });
+    }
     await setup();
     const c = db();
 
@@ -101,7 +107,7 @@ module.exports = async (req, res) => {
     // Step 1 (Telegram): check the person and the bids, create an order
     if (r === 'order' && post) {
       const u = tgUser(body.initData);
-      if (!u) return out({ ok: false, error: 'auth' }, 401);
+      if (!u) return out({ ok: false, error: body.initData ? 'sig' : 'auth' }, 401);
       const uid = await upsertUser(u);
       const v = await check(c, uid, +body.auction_id, body.amounts);
       if (v.error) return out({ ok: false, error: v.error });
@@ -143,7 +149,7 @@ module.exports = async (req, res) => {
 
     if (r === 'mybids' && post) {
       const u = tgUser(body.initData);
-      if (!u) return out({ ok: false, error: 'auth' }, 401);
+      if (!u) return out({ ok: false, error: body.initData ? 'sig' : 'auth' }, 401);
       const uid = await upsertUser(u);
       const [rows] = await c.query(`SELECT b.id, b.auction_id, b.bid_amount amount, b.status, a.product_name name,
         a.status astatus, (a.winning_bid_id=b.id) won,
