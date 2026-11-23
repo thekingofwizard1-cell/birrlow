@@ -91,7 +91,8 @@ module.exports = async (req, res) => {
     if (r === 'auctions') {
       await closeExpired();
       const [rows] = await c.query(`SELECT a.id, a.product_name name, a.product_name_am name_am, a.emoji, a.description,
-        a.participation_fee fee, a.min_bid, a.end_time end_at,
+        a.participation_fee fee, a.min_bid, a.retail_price retail, a.end_time end_at,
+        (SELECT COUNT(DISTINCT b2.user_id) FROM bids b2 WHERE b2.auction_id=a.id) people,
         (SELECT COUNT(*) FROM bids b WHERE b.auction_id=a.id) bids
         FROM auctions a WHERE a.status='active' ORDER BY a.end_time`);
       return out({ ok: true, auctions: rows });
@@ -144,7 +145,9 @@ module.exports = async (req, res) => {
       const u = tgUser(body.initData);
       if (!u) return out({ ok: false, error: 'auth' }, 401);
       const uid = await upsertUser(u);
-      const [rows] = await c.query(`SELECT b.id, b.auction_id, b.bid_amount amount, b.status, a.product_name name
+      const [rows] = await c.query(`SELECT b.id, b.auction_id, b.bid_amount amount, b.status, a.product_name name,
+        a.status astatus, (a.winning_bid_id=b.id) won,
+        (SELECT COUNT(*) FROM bids x WHERE x.auction_id=b.auction_id AND x.bid_amount=b.bid_amount) reps
         FROM bids b JOIN auctions a ON a.id=b.auction_id WHERE b.user_id=? ORDER BY b.created_at DESC`, [uid]);
       return out({ ok: true, bids: rows });
     }
