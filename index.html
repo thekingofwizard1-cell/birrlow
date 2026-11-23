@@ -130,7 +130,7 @@ function confirmPay(id,nums){const g=document.getElementById('go');g.textContent
 setTimeout(()=>{W('bl_bids'+id,bidsOf(id).concat(nums));W('bl_extra'+id,S('bl_extra'+id,0)+nums.length);document.getElementById('modal').innerHTML='';route();toast('✔ '+t('ok'))},1200)}
 function toast(m){const e=document.getElementById('toast');e.textContent=m;e.classList.remove('hidden');setTimeout(()=>e.classList.add('hidden'),2600)}
 function stub(){return `<div class="max-w-xl mx-auto px-4 py-24 text-center"><p class="text-xl font-h font-bold">${t('soon')}</p><a href="#/" class="${btn} mt-6">${t('back')}</a></div>`}
-function route(){const h=location.hash||'#/';cur=0;const app=document.getElementById('app');
+function route(){const h=(location.hash||'').startsWith('#/')?location.hash:'#/';cur=0;const app=document.getElementById('app');
 if(h.startsWith('#/a/')){cur=+h.slice(4);app.innerHTML=auction(cur);inputs()}else if(h=='#/'||h=='#'||h=='')app.innerHTML=home();else app.innerHTML=(window.PG&&PG(h))||stub();
 document.title='BirrLow';scrollTo(0,0);chrome()}
 function chrome(){const links=nav.map(([h,k])=>`<a href="${h}" class="hover:text-g">${t(k)}</a>`).join('')+`<a href="#/register" class="bg-g text-white rounded-lg px-4 py-2">${t('rg')}</a>`;
@@ -240,7 +240,7 @@ const GRAD=["from-indigo-700 to-purple-500","from-slate-700 to-slate-400","from-
 async function loadA(first){try{const d=await api('auctions');if(!d.ok||!d.auctions.length)return;
 A.length=0;d.auctions.forEach((x,i)=>A.push({id:x.id,n:{en:x.name,am:x.name_am||x.name},e:x.emoji||'🎁',c:GRAD[i%4],cat:'Auction',fee:+x.fee,bids:x.bids,views:0,retail:+x.retail||0,people:x.people,end:new Date(x.end_at).getTime(),cents:true,d:{en:x.description||'',am:x.description||''}}));
 LIVE=true;if(first){route();return}
-const h=location.hash;if(h==''||h=='#/')route();else{const m=h.match(/^#\/a\/(\d+)/);if(m){const a=A.find(x=>x.id==+m[1]),c=document.getElementById('bc');if(a&&c)c.textContent=mon(a.bids);const pc=document.getElementById('pc');if(a&&pc&&a.people!=null)pc.textContent=mon(a.people)}}}catch(e){}}
+const h=location.hash;if(!h.startsWith('#/')||h=='#/')route();else{const m=h.match(/^#\/a\/(\d+)/);if(m){const a=A.find(x=>x.id==+m[1]),c=document.getElementById('bc');if(a&&c)c.textContent=mon(a.bids);const pc=document.getElementById('pc');if(a&&pc&&a.people!=null)pc.textContent=mon(a.people)}}}catch(e){}}
 async function serverPay(id,nums){const e=document.getElementById('err');const fail=k=>{e.textContent=t('e_'+k);e.classList.remove('hidden')};
 if(!TG)return fail('auth');e.classList.add('hidden');
 try{const d=await api('order',{auction_id:id,amounts:nums});if(!d.ok)return fail(d.error);TG.openLink(location.origin+location.pathname+'#/pay?o='+d.token)}catch(x){fail('server')}}
@@ -259,6 +259,8 @@ Object.assign(T.am,{pp2:"ተሳታፊዎች",ret:"የገበያ ዋጋ",bidid:"�
 const bidRow=x=>{const done=x.astatus=='completed',good=done?x.won:x.status=='unique',lab=done?t(x.won?'won2':'lost2'):t(x.status=='unique'?'u':'d');
 return `<div class="p-4 border-b last:border-0"><div class="flex justify-between items-center"><div class="font-bold">${x.name} #${x.auction_id}</div><span class="text-xs font-bold px-3 py-1 rounded-full ${good?'bg-g-l text-g':'bg-red-100 text-red-700'}">${lab}</span></div><div class="font-h text-xl mt-1">${x.amount} ETB</div><div class="text-xs text-gray-500 mt-1">${t('bidid')}: ${x.id} · ${x.reps>1?t('chosen')+' ×'+x.reps:t('just1')}</div></div>`};
 const bidGroup=(h,l)=>l.length?`<h3 class="font-h font-bold text-lg mt-6 mb-2">${h}</h3><div class="bg-white border rounded-2xl text-ink">${l.map(bidRow).join('')}</div>`:'';
+Object.assign(T.en,{e_sig:"Telegram login could not be verified. The bot token saved on the server may be wrong.",gp:"Bids are placed from Telegram."});
+Object.assign(T.am,{e_sig:"የቴሌግራም መግቢያ ማረጋገጥ አልተቻለም። በሰርቨሩ የተቀመጠው የቦት ቶከን የተሳሳተ ሊሆን ይችላል።",gp:"ጨረታ የሚቀርበው ከቴሌግራም ነው።"});
 loadA(true);setInterval(()=>loadA(false),8000);
 const _chrome=chrome;
 chrome=function(){_chrome();if(LIVE){['nav','mnav'].forEach(i=>{const e=document.getElementById(i);e.innerHTML=e.innerHTML.replace(/<a href="#\/login"[^>]*>[^<]*<\/a>/,`<a href="#/my" class="hover:text-g">${t('my')}</a>`).replace(/<a href="#\/register"[^>]*>[^<]*<\/a>/,TG?'':`<a href="https://t.me/BirrLowBot" class="bg-g text-white rounded-lg px-4 py-2">${t('tgb')}</a>`)});return}if(!S('bl_user',null))return;['nav','mnav'].forEach(i=>{const e=document.getElementById(i);e.innerHTML=e.innerHTML.replace('href="#/login"','href="#/my"').replace('>'+t('si')+'<','>'+t('my')+'<').replace(/<a href="#\/register"[^>]*>[^<]*<\/a>/,(TG?'':`<a href="#/out" class="bg-g text-white rounded-lg px-4 py-2">${t('out')}</a>`))})};
