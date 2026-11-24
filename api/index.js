@@ -43,6 +43,17 @@ async function upsertUser(u) {
   return r[0].id;
 }
 
+let ready2;
+const setup2 = () => ready2 || (ready2 = db().query(`CREATE TABLE IF NOT EXISTS audit_log (
+  id INT AUTO_INCREMENT PRIMARY KEY, kind VARCHAR(40) NOT NULL, auction_id INT NULL,
+  detail VARCHAR(500) NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)`));
+// Audit record: every payment, closing and extension is written here
+const log = (c, kind, aid, detail) => c.query('INSERT INTO audit_log (kind,auction_id,detail) VALUES (?,?,?)',
+  [kind, aid, String(detail).slice(0, 500)]).catch(() => {});
+// Send Telegram messages (people who never started the bot are skipped quietly)
+const tell = (ids, text) => Promise.allSettled(ids.map((id) => fetch('https://api.telegram.org/bot' + TOKEN() + '/sendMessage', {
+  method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: id, text }) })));
+
 // Close finished auctions: lowest amount chosen by exactly one person wins.
 // If nobody is unique, the auction is extended by 24 hours and all bids stay.
 async function closeExpired() {
@@ -53,8 +64,10 @@ async function closeExpired() {
     if (w.length) {
       const [b] = await c.query(`SELECT id FROM bids WHERE auction_id=? AND bid_amount=?`, [id, w[0].bid_amount]);
       await c.query(`UPDATE auctions SET status='completed', winning_bid_id=? WHERE id=?`, [b[0].id, id]);
+      await log(c, 'closed', id, `winner bid ${b[0].id} at ${w[0].bid_amount}`);
     } else {
       await c.query(`UPDATE auctions SET end_time=DATE_ADD(UTC_TIMESTAMP(),INTERVAL 24 HOUR) WHERE id=?`, [id]);
+      await log(c, 'extended', id, 'no unique bid, extended 24 hours');
     }
   }
 }
@@ -92,6 +105,7 @@ module.exports = async (req, res) => {
       return out({ ok: true, token_set: !!t, token_format_ok: /^\d+:[A-Za-z0-9_-]{30,}$/.test(t), db_host_set: !!process.env.DB_HOST });
     }
     await setup();
+    await setup2();
     const c = db();
 
     if (r === 'auctions') {
@@ -144,7 +158,39 @@ module.exports = async (req, res) => {
           ['BD-' + crypto.randomBytes(5).toString('hex'), o.auction_id, o.user_id, x]);
       }
       await fixStatus(c, o.auction_id);
+      await log(c, 'paid', o.auction_id, `order ${o.token.slice(0, 8)} user ${o.user_id} amounts ${v.am.join(',')}`);
+      // Tell everyone holding a number that is now repeated
+      try {
+        for (const x of v.am) {
+          const [h] = await c.query(`SELECT DISTINCT u.telegram_id tg FROM bids b JOIN users u ON u.id=b.user_id
+            WHERE b.auction_id=? AND b.bid_amount=?`, [o.auction_id, x]);
+          if (h.length > 1) {
+            const n = v.a.product_name;
+            await tell(h.map((r) => r.tg), `BirrLow: your number ${x} in ${n} is now chosen by ${h.length} people, so it is no longer unique.\n${x} ብር በ${n} አሁን በ${h.length} ሰዎች ተመርጧል፤ ብቸኛ አይደለም።`);
+          }
+        }
+      } catch (e) { console.error(e); }
       return out({ ok: true });
+    }
+
+    if (r === 'results') {
+      await closeExpired();
+      const [rows] = await c.query(`SELECT a.id, a.product_name name, a.product_name_am name_am, a.emoji, a.end_time end_at,
+        (SELECT COUNT(*) FROM bids b WHERE b.auction_id=a.id) bids, w.bid_amount win_amount,
+        TRIM(CONCAT(IFNULL(u.first_name,''),' ',LEFT(IFNULL(u.last_name,''),1))) winner
+        FROM auctions a LEFT JOIN bids w ON w.id=a.winning_bid_id LEFT JOIN users u ON u.id=w.user_id
+        WHERE a.status='completed' ORDER BY a.end_time DESC LIMIT 30`);
+      return out({ ok: true, results: rows });
+    }
+
+    // Ranked bids are public only after the auction has closed
+    if (r === 'ranked') {
+      const [ar] = await c.query(`SELECT a.id, a.product_name name, a.emoji, a.status, w.bid_amount win_amount
+        FROM auctions a LEFT JOIN bids w ON w.id=a.winning_bid_id WHERE a.id=?`, [+q.id]);
+      if (!ar[0] || ar[0].status !== 'completed') return out({ ok: false, error: 'closed' }, 404);
+      const [rows] = await c.query(`SELECT bid_amount amount, COUNT(*) n FROM bids WHERE auction_id=?
+        GROUP BY bid_amount ORDER BY bid_amount ASC`, [+q.id]);
+      return out({ ok: true, auction: ar[0], rows });
     }
 
     if (r === 'mybids' && post) {
